@@ -1,0 +1,60 @@
+name: Build APK — assistente-ia-juridico3
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Java 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # SEM Node.js, SEM npm, SEM Capacitor — Android puro WebView
+      - name: Permissão gradlew
+        working-directory: android
+        run: chmod +x gradlew
+
+      - name: Build APK
+        working-directory: android
+        timeout-minutes: 25
+        env:
+          GRADLE_OPTS: "-Xmx3g -Dorg.gradle.daemon=false -Dfile.encoding=UTF-8"
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: Renomear APK
+        run: |
+          APK=$(find android -name "*.apk" | head -1)
+          cp "$APK" "assistente-ia-juridico3-v1.0.6.apk"
+          echo "APK: $APK"
+          ls -lh "assistente-ia-juridico3-v1.0.6.apk"
+
+      - name: Deletar release anterior
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release delete latest-apk --yes 2>/dev/null || true
+
+      - name: Publicar Release com APK
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create latest-apk \
+            --title "✅ assistente-ia-juridico3 v1.0.6 — APK" \
+            --notes "APK gerado automaticamente.
+
+          **Instalar no celular:**
+          1. Baixe o arquivo .apk abaixo
+          2. Configurações → Segurança → Fontes desconhecidas ✓
+          3. Abra o .apk → Instalar" \
+            --latest \
+            "assistente-ia-juridico3-v1.0.6.apk"

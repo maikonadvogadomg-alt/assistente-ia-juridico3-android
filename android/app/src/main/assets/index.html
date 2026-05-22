@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
+    <title>Assistente IA Jurídico</title>
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#7c3aed" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="IA Jurídico" />
+    <link rel="apple-touch-icon" href="icon-192.png" />
+    <link rel="icon" type="image/svg+xml" href="icon.svg" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script type="module" src="./assets/index-B0SMdl17.js"></script>
+    <link rel="stylesheet" href="./assets/index-ML5Kmu-w.css">
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      // Não registra SW dentro do APK Capacitor — interfere com o file server nativo
+      var _cap = typeof window !== 'undefined' && (
+        typeof window.Capacitor !== 'undefined' ||
+        (navigator.userAgent.indexOf('Android') !== -1 && navigator.userAgent.indexOf('wv') !== -1)
+      );
+      if ('serviceWorker' in navigator && !_cap) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('sw.js').catch(function() {});
+        });
+      }
+      // Exibe erros JS na tela em vez de tela branca silenciosa
+      window.onerror = function(msg, src, line) {
+        var r = document.getElementById('root');
+        if (r && !r.firstElementChild) {
+          r.style.cssText = 'background:#0d1520;color:#f87171;font-family:monospace;padding:24px;min-height:100vh;white-space:pre-wrap';
+          r.textContent = 'Erro JS:\n' + msg + '\n' + (src||'') + ':' + (line||'');
+        }
+      };
+    </script>
+  </body>
+</html>
